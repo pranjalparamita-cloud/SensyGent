@@ -12,6 +12,7 @@ layout.
 from __future__ import annotations
 
 import html as _html
+import re
 from pathlib import Path
 from typing import Iterable, List, Optional, Sequence
 
@@ -25,19 +26,43 @@ CSS_FILE = ASSET_DIR / "styles.css"
 _CACHE: dict = {}
 
 
+_IMPORT_RE = re.compile(r"^\s*@import[^;]+;", re.MULTILINE)
+
+
 def load_css(theme: str = palette.DEFAULT_THEME) -> str:
-    """Read the stylesheet and prefix it with the active theme's variables."""
+    """Read the stylesheet, with the theme's variables injected.
+
+    Order matters: CSS requires ``@import`` (the web fonts) to come before any
+    other rule, so the imports are hoisted above the ``:root`` block — otherwise
+    browsers silently drop the fonts.
+    """
     key = str(CSS_FILE)
     if key not in _CACHE:
         try:
-            _CACHE[key] = CSS_FILE.read_text(encoding="utf-8")
+            raw = CSS_FILE.read_text(encoding="utf-8")
         except OSError:
-            _CACHE[key] = "/* stylesheet missing */"
-    return f"{palette.theme_css(theme)}\n{_CACHE[key]}"
+            raw = "/* stylesheet missing */"
+        imports = _IMPORT_RE.findall(raw)
+        _CACHE[key] = (_IMPORT_RE.sub("", raw), imports)
+    body, imports = _CACHE[key]
+    return f"{chr(10).join(imports)}\n{palette.theme_css(theme)}\n{body}"
+
+
+def font_links() -> str:
+    """Preconnect + stylesheet links for the web fonts (belt and braces)."""
+    return (
+        '<link rel="preconnect" href="https://fonts.googleapis.com">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+        "family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800"
+        "&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700"
+        "&family=JetBrains+Mono:wght@400;600&display=swap\">"
+    )
 
 
 def inject_theme(theme: str = palette.DEFAULT_THEME) -> None:
-    """Install the whole design system in one call."""
+    """Install the whole design system: fonts, theme variables, stylesheet."""
+    st.markdown(font_links(), unsafe_allow_html=True)
     st.markdown(f"<style>{load_css(theme)}</style>", unsafe_allow_html=True)
 
 

@@ -237,6 +237,25 @@ class DesignSystemTests(unittest.TestCase):
         self.assertIn("stChatMessage", css)
         self.assertGreater(len(css), 8000)
 
+    def test_web_fonts_are_imported_first(self):
+        """@import must precede every other rule or browsers drop the fonts."""
+        css = styles.load_css("aurora")
+        self.assertIn("@import", css)
+        self.assertLess(css.index("@import"), css.index(":root"))
+        self.assertIn("Plus+Jakarta+Sans", css)
+        self.assertIn("Fraunces", css)
+
+    def test_font_links_include_preconnect(self):
+        links = styles.font_links()
+        self.assertIn("preconnect", links)
+        self.assertIn("fonts.gstatic.com", links)
+
+    def test_each_theme_reskins_the_stylesheet(self):
+        aurora = styles.load_css("aurora")
+        blush = styles.load_css("blush")
+        self.assertIn("--sg-primary: #8b7bf7", aurora)
+        self.assertIn("--sg-primary: #f4739b", blush)
+
     def test_components_escape_user_content(self):
         markup = styles.entry("<script>alert(1)</script>", "<b>bold</b>")
         self.assertNotIn("<script>", markup)

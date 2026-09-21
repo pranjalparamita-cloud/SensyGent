@@ -94,6 +94,7 @@ def init_state() -> None:
     ss.setdefault("tts_failures", 0)
     ss.setdefault("flash", [])
     ss.setdefault("ground_prompt", random.choice(tools.GRATITUDE_PROMPTS))
+    ss.setdefault("reminders", random.sample(tools.AFFIRMATIONS, 3))
 
 
 def flash(message: str, icon: str = "🌿", balloons: bool = False) -> None:
