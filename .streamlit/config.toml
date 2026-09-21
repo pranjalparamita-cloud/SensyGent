@@ -1,0 +1,30 @@
+# SensyGent — Streamlit runtime configuration
+# This file only holds *defaults*; in-app themes (5 of them) are applied with CSS.
+
+[theme]
+base = "dark"
+primaryColor = "#8b7bf7"
+backgroundColor = "#07070f"
+secondaryBackgroundColor = "#12122a"
+textColor = "#eef0ff"
+font = "sans serif"
+
+[server]
+headless = true
+runOnSave = true
+fileWatcherType = "poll"          # friendly to container filesystems
+enableCORS = true
+corsAllowedOrigins = ["*"]
+enableXsrfProtection = true
+maxUploadSize = 10
+
+[browser]
+gatherUsageStats = false          # no telemetry, ever
+
+[client]
+showErrorDetails = true
+toolbarMode = "minimal"
+showSidebarNavigation = false
+
+[logger]
+level = "warning"
