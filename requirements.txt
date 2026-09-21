@@ -1,0 +1,17 @@
+# SensyGent — free-tier friendly dependencies.
+# Every one of these is open source and costs nothing to run.
+
+streamlit>=1.40,<2          # the app framework
+altair>=5.0,<6              # charts on the Insights page
+pandas>=2.0                 # data frames for those charts
+requests>=2.31              # talks to the optional LLM providers
+
+# Free, keyless text-to-speech (the "talking skills"). If either fails to
+# install on your host, the app still runs perfectly — voice just stays off.
+edge-tts>=6.1               # neural voices, no API key
+gTTS>=2.5                   # fallback voice, also keyless
+
+# Optional third fallback: your operating system's own voice, fully offline.
+# Only install it if you want speech with no internet at all (on Linux it also
+# needs `espeak-ng`). SensyGent works fine without it.
+# pyttsx3>=2.90
