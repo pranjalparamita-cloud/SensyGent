@@ -1,0 +1,7 @@
+# Local virtualenv with bundled ffmpeg binary — not for source control
+video_output/venv/
+# Symlink into the venv above
+video_output/bin/
+# Python cache
+__pycache__/
+*.pyc
